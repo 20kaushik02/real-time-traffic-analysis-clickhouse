@@ -6,10 +6,12 @@
     - maybe GRE for VPN usage?
   - L3 - IPv6 is only around 10%, let's drop it
 - Selection (of fields):
-  - Timestamp - note: capture window is from 0500-0515 UTC
+  - Timestamp
+    - capture window is from 0500-0515 UTC
+    - nanosecond precision, use DateTime64 data type in ClickHouse
   - IP
     - addresses - src, dst
-    - protocol - 6 (TCP) or 17 (UDP). cld go for boolean to save space
-  - TCP
+    - protocol - TCP or UDP. cld go for boolean in ClickHouse to save space
+  - TCP/UDP
     - ports - sport, dport
-  - Packet size - in bytes - could exclude L2?
+  - Packet size - in bytes
