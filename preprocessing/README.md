@@ -25,8 +25,8 @@
   - Windows: `.\bin\windows\kafka-server-start.bat .\config\server.properties`
   - Mac: `bin/kafka-server-start.sh config/server.properties`
 - Creating a Kafka topic:
-- Windows: `.\bin\windows\kafka-topics.bat --create --topic %topicname% --bootstrap-server localhost:9092 --partitions 1 --replication-factor 1`
-- Mac: `bin/kafka-topics.sh --create --topic %topicname% --bootstrap-server localhost:9092 --partitions 1 --replication-factor 1`
+  - Windows: `.\bin\windows\kafka-topics.bat --create --topic %topicname% --bootstrap-server localhost:9092 --partitions 1 --replication-factor 1`
+  - Mac: `bin/kafka-topics.sh --create --topic %topicname% --bootstrap-server localhost:9092 --partitions 1 --replication-factor 1`
 
 
 # Streaming from pcap file using Kafka
