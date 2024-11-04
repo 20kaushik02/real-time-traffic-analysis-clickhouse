@@ -2,3 +2,4 @@
 *.gz*
 *.csv*
 *.tsv*
+**node_modules/*
