@@ -1,5 +1,7 @@
 # Data filtering, preprocessing and selection for further use
 
+## Traffic data
+
 - IP packet traces are taken [from here](https://mawi.wide.ad.jp/mawi/samplepoint-F/2023/)
 - Filtering
   - L4 - Limit to TCP and UDP
@@ -14,6 +16,11 @@
   - TCP/UDP - ports - sport, dport
   - Packet size - in bytes
 - `sample_output.csv` contains a partial subset of `202310081400.pcap`, ~600K packets
+
+## IP geolocation database
+
+- This project uses the IP2Location LITE database for [IP geolocation](https://lite.ip2location.com)
+- bit of preprocessing to leave out country code and convert IP address from decimal format to dotted string format
 
 # Setting up Kafka
 - Download and install kafka [from here](https://kafka.apache.org/downloads)
