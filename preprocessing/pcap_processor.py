@@ -18,7 +18,8 @@ KAFKA_SERVER = 'localhost:9092'  # Adjust to your Kafka server
 # Initialize Kafka Producer
 producer = KafkaProducer(
     bootstrap_servers=KAFKA_SERVER,
-    value_serializer=lambda v: json.dumps(v).encode('utf-8')  # Encode data as JSON
+    #value_serializer=lambda v: json.dumps(v).encode('utf-8')  # Encode data as JSON
+    value_serializer=lambda v: v.encode('utf-8') if isinstance(v, str) else str(v).encode('utf-8') #remove intermediate JSON encoding
 )
 
 
