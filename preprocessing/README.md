@@ -1,5 +1,7 @@
 # Data filtering, preprocessing and selection for further use
 
+## Traffic data
+
 - IP packet traces are taken [from here](https://mawi.wide.ad.jp/mawi/samplepoint-F/2023/)
 - Filtering
   - L4 - Limit to TCP and UDP
@@ -15,7 +17,27 @@
   - Packet size - in bytes
 - `sample_output.csv` contains a partial subset of `202310081400.pcap`, ~600K packets
 
+## IP geolocation database
+
+- This project uses the IP2Location LITE database for [IP geolocation](https://lite.ip2location.com)
+- bit of preprocessing to leave out country code and convert IP address from decimal format to dotted string format
+
+# Setting up Kafka
+- Download and install kafka [from here](https://kafka.apache.org/downloads)
+- Run all commands in separate terminals from installation location
+- Zookeeper:
+  - Windows: `.\bin\windows\zookeeper-server-start.bat .\config\zookeeper.properties`
+  - Mac: `bin/zookeeper-server-start.sh config/zookeeper.properties`
+- Kafka Broker:
+  - Windows: `.\bin\windows\kafka-server-start.bat .\config\server.properties`
+  - Mac: `bin/kafka-server-start.sh config/server.properties`
+- Creating a Kafka topic:
+  - Windows: `.\bin\windows\kafka-topics.bat --create --topic %topicname% --bootstrap-server localhost:9092 --partitions 1 --replication-factor 1`
+  - Mac: `bin/kafka-topics.sh --create --topic %topicname% --bootstrap-server localhost:9092 --partitions 1 --replication-factor 1`
+
+
 # Streaming from pcap file using Kafka
+- Start zookeeper and Kafka broker whenever python code is run after machine reboot
 - Run pcap_processor.py file
 - Arguments
   - -f or --pcap_file: pcap file path, mandatory argument
