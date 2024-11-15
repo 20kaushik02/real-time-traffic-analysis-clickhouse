@@ -1,0 +1,13 @@
+Execution steps:
+
+ensure to pull clickhouse docker image
+> docker-compose up -d
+identify the custom networks created.
+> docker network ls
+inspect the keeper network and verify whether all the containers are connected to it
+> docker network inspect {{dds_proj_clickhouse-keeper-network}}
+if all the containers are not connected
+> docker-compose restart
+To execute queries
+> docker exec -it clickhouse-server1 clickhouse-client
+> docker exec -it clickhouse-server2 clickhouse-client
