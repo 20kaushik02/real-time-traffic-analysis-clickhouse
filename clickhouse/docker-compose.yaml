@@ -1,5 +1,3 @@
-version: '3.8'
-
 services:
   clickhouse-keeper1:
     image: clickhouse/clickhouse-server:latest
@@ -57,6 +55,7 @@ services:
     container_name: clickhouse-server1
     volumes:
       - ./node1-config/:/etc/clickhouse-server/config.d/
+      - clickhouse_data1:/var/lib/clickhouse
     networks:
       clickhouse-server-network:
         aliases:
@@ -64,6 +63,16 @@ services:
       clickhouse-keeper-network:
         aliases:
           - clickhouse-server1
+    deploy:
+      replicas: 1
+      # placement:
+      #   constraints: [node.labels.role == server]
+      update_config:
+        delay: 10s
+      # resources:
+      #   limits:
+      #     cpus: "0.50"
+      #     memory: 100M
     depends_on:
       - clickhouse-keeper1
       - clickhouse-keeper2
@@ -77,6 +86,7 @@ services:
     container_name: clickhouse-server2
     volumes:
       - ./node2-config/:/etc/clickhouse-server/config.d/
+      - clickhouse_data2:/var/lib/clickhouse
     networks:
       clickhouse-server-network:
         aliases:
@@ -84,6 +94,16 @@ services:
       clickhouse-keeper-network:
         aliases:
           - clickhouse-server2
+    deploy:
+      replicas: 1
+      # placement:
+      #   constraints: [node.labels.role == server]
+      update_config:
+        delay: 10s
+      # resources:
+      #   limits:
+      #     cpus: "0.50"
+      #     memory: 100M
     depends_on:
       - clickhouse-keeper1
       - clickhouse-keeper2
@@ -94,4 +114,12 @@ services:
 
 networks:
   clickhouse-server-network:
+    driver: overlay
   clickhouse-keeper-network:
+    driver: overlay
+
+volumes:
+  clickhouse_data1:
+    driver: local
+  clickhouse_data2:
+    driver: local
