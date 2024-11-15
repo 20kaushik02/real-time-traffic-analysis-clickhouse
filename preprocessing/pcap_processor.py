@@ -14,6 +14,7 @@ dbg_print = lambda *x: DEBUG and print(f"[DEBUG] {x}")
 # Kafka Configuration
 KAFKA_TOPIC = 'pcap_stream'
 KAFKA_SERVER = 'localhost:9092'  # Adjust to your Kafka server
+#KAFKA_SERVER = 'kafka_service:9092'  
 
 # Initialize Kafka Producer
 producer = KafkaProducer(
