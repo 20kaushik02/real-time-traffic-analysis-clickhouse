@@ -1,0 +1,97 @@
+version: '3.8'
+
+services:
+  clickhouse-keeper1:
+    image: clickhouse/clickhouse-server:latest
+    container_name: clickhouse-keeper1
+    command: >
+      /usr/bin/clickhouse-keeper --config-file=/etc/clickhouse-server/config.xml
+    volumes:
+      - ./clickhouse_keeper/keeper1-config.xml:/etc/clickhouse-server/config.xml
+      - ./clickhouse_data/data:/var/lib/clickhouse/data
+      - ./clickhouse_data/tmp:/var/lib/clickhouse/tmp
+      - ./clickhouse_data/user_files:/var/lib/clickhouse/user_files
+      - ./clickhouse_data/format_schemas:/var/lib/clickhouse/format_schemas
+
+    networks:
+      clickhouse-keeper-network:
+        aliases:
+          - clickhouse-keeper1
+
+  clickhouse-keeper2:
+    image: clickhouse/clickhouse-server:latest
+    container_name: clickhouse-keeper2
+    command: >
+      /usr/bin/clickhouse-keeper --config-file=/etc/clickhouse-server/config.xml
+    volumes:
+      - ./clickhouse_keeper/keeper2-config.xml:/etc/clickhouse-server/config.xml
+      - ./clickhouse_data/data:/var/lib/clickhouse/data
+      - ./clickhouse_data/tmp:/var/lib/clickhouse/tmp
+      - ./clickhouse_data/user_files:/var/lib/clickhouse/user_files
+      - ./clickhouse_data/format_schemas:/var/lib/clickhouse/format_schemas
+
+    networks:
+      clickhouse-keeper-network:
+        aliases:
+          - clickhouse-keeper2
+
+  clickhouse-keeper3:
+    image: clickhouse/clickhouse-server:latest
+    container_name: clickhouse-keeper3
+    command: >
+      /usr/bin/clickhouse-keeper --config-file=/etc/clickhouse-server/config.xml
+    volumes:
+      - ./clickhouse_keeper/keeper3-config.xml:/etc/clickhouse-server/config.xml
+      - ./clickhouse_data/data:/var/lib/clickhouse/data
+      - ./clickhouse_data/tmp:/var/lib/clickhouse/tmp
+      - ./clickhouse_data/user_files:/var/lib/clickhouse/user_files
+      - ./clickhouse_data/format_schemas:/var/lib/clickhouse/format_schemas
+
+    networks:
+      clickhouse-keeper-network:
+        aliases:
+          - clickhouse-keeper3
+
+  clickhouse-server1:
+    image: clickhouse/clickhouse-server:latest
+    container_name: clickhouse-server1
+    volumes:
+      - ./node1-config/:/etc/clickhouse-server/config.d/
+    networks:
+      clickhouse-server-network:
+        aliases:
+          - clickhouse-server1
+      clickhouse-keeper-network:
+        aliases:
+          - clickhouse-server1
+    depends_on:
+      - clickhouse-keeper1
+      - clickhouse-keeper2
+      - clickhouse-keeper3
+    ports:
+      - "9001:9000"  # Native client port
+      - "8123:8123"  # HTTP interface
+
+  clickhouse-server2:
+    image: clickhouse/clickhouse-server:latest
+    container_name: clickhouse-server2
+    volumes:
+      - ./node2-config/:/etc/clickhouse-server/config.d/
+    networks:
+      clickhouse-server-network:
+        aliases:
+          - clickhouse-server2
+      clickhouse-keeper-network:
+        aliases:
+          - clickhouse-server2
+    depends_on:
+      - clickhouse-keeper1
+      - clickhouse-keeper2
+      - clickhouse-keeper3
+    ports:
+      - "9002:9000"  # Native client port
+      - "8124:8123"  # HTTP interface
+
+networks:
+  clickhouse-server-network:
+  clickhouse-keeper-network:
