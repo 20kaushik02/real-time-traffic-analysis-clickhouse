@@ -1,0 +1,30 @@
+clickhouse-server{{server_num}}:
+    image: clickhouse/clickhouse-server:latest
+    container_name: clickhouse-server{{server_num}}
+    volumes:
+      - ./node{{server_num}}-config/:/etc/clickhouse-server/config.d/
+      - clickhouse_data{{server_num}}:/var/lib/clickhouse
+    networks:
+      clickhouse-server-network:
+        aliases:
+          - clickhouse-server{{server_num}}
+      clickhouse-keeper-network:
+        aliases:
+          - clickhouse-server{{server_num}}
+    deploy:
+      replicas: 1
+      # placement:
+      #   constraints: [node.labels.role == server]
+      update_config:
+        delay: 10s
+      # resources:
+      #   limits:
+      #     cpus: "0.50"
+      #     memory: 100M
+    depends_on:
+      - clickhouse-keeper1
+      - clickhouse-keeper2
+      - clickhouse-keeper3
+    ports:
+      - "900{{server_num}}:9000"  # Native client port
+      - "8123:8123"  # HTTP interface
