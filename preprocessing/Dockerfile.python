@@ -16,5 +16,5 @@ COPY pcap_processor.py /app
 # Expose the port Kafka uses (optional, for communication with other services)
 EXPOSE 9092
 
-# Command to run your Python application
+# Command to allow custom runtime arguments
 CMD ["python", "pcap_processor.py"]
