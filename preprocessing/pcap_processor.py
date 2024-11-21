@@ -17,7 +17,8 @@ class KafkaClient:
         self.topic_name = topic_name
         if mode == 'producer':
             self.client = KafkaProducer(
-                bootstrap_servers=['localhost:9092'],
+                bootstrap_servers=['kafka:9092'],
+                max_request_size = 200000000,
                 api_version=(0,11,5),
                 value_serializer=lambda x: json.dumps(x).encode('utf-8'))
         elif mode == 'consumer' and topic_name is not None:
@@ -31,7 +32,7 @@ class KafkaClient:
 
 # Kafka Configuration
 KAFKA_TOPIC = 'pcap_stream'
-KAFKA_SERVER = 'localhost:9092'  # Adjust to your Kafka server
+KAFKA_SERVER = 'kafka:9092'  # Adjust to your Kafka server
 #KAFKA_SERVER = 'kafka_service:9092'  
 
 # Initialize Kafka Producer
