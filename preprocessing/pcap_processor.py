@@ -11,6 +11,8 @@ import json
 
 dbg_print = lambda *x: DEBUG and print(f"[DEBUG] {x}")
 
+
+
 class KafkaClient:
     def __init__(self, topic_name=None, mode='producer'):
         self.mode = mode
