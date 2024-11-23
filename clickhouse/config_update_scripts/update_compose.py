@@ -31,6 +31,7 @@ if __name__ == "__main__":
     # new shard template that is gonna be added to remote servers file of each node
     new_shard_str = f'''
         <shard>
+                <weight>{curr_num_shards+1}</weight>
                 <internal_replication>true</internal_replication>
                 <replica>
                     <host>clickhouse-server{curr_num_servers+1}</host>
