@@ -1,4 +1,9 @@
 services:
+  registry:
+    image: registry:2
+    ports:
+      - "5000:5000"
+      
   clickhouse-keeper1:
     image: clickhouse/clickhouse-server:latest
     container_name: clickhouse-keeper1
@@ -69,10 +74,10 @@ services:
       #   constraints: [node.labels.role == server]
       update_config:
         delay: 10s
-      # resources:
-      #   limits:
-      #     cpus: "0.50"
-      #     memory: 100M
+      resources:
+        limits:
+          cpus: "0.50"
+          memory: 1200M
     depends_on:
       - clickhouse-keeper1
       - clickhouse-keeper2
@@ -100,10 +105,10 @@ services:
       #   constraints: [node.labels.role == server]
       update_config:
         delay: 10s
-      # resources:
-      #   limits:
-      #     cpus: "0.50"
-      #     memory: 100M
+      resources:
+        limits:
+          cpus: "0.50"
+          memory: 1200M
     depends_on:
       - clickhouse-keeper1
       - clickhouse-keeper2
@@ -115,8 +120,10 @@ services:
 networks:
   clickhouse-server-network:
     driver: overlay
+    attachable: true
   clickhouse-keeper-network:
     driver: overlay
+    attachable: true
 
 volumes:
   clickhouse_data1:

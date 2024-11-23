@@ -4,6 +4,7 @@ import subprocess
 import json
 import xml.etree.ElementTree as ET
 import os
+import re
 
 if __name__ == "__main__":
     
@@ -15,14 +16,10 @@ if __name__ == "__main__":
 
     all_services = [json.loads(s) for s in all_services]
     # extracting the name, removing the custom id from it and storing it in a list
-    all_service_names = [service['Names'].split('.')[0] for service in all_services]
-    # extracting only 'keeper1', 'server1'...
+    all_service_names = [service['Names'].split('.')[0] for service in all_services if re.findall(r'clickhouse-server',service['Names'])]
+    # extracting only 'server1','server2'...
     all_service_names = [ name.split('-')[-1] for name in all_service_names]
 
-    # removing all keeepers
-    all_service_names.remove('keeper1')
-    all_service_names.remove('keeper2')
-    all_service_names.remove('keeper3')
     curr_num_servers = sorted(all_service_names)[-1][-1]
 
     replication_factor = 2
