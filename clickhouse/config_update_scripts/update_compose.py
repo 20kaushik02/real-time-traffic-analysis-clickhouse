@@ -79,6 +79,7 @@ if __name__ == "__main__":
     config_template = env.get_template('config.xml.jinja')
     macros_template = env.get_template('macros.xml.jinja')
     use_keeper_template = env.get_template('use-keeper.xml.jinja')
+    storage_policy_template = env.get_template('storage-policy.xml.jinja')
 
     for i in range(1,3):
         config_content = config_template.render(node_num=curr_num_servers+i)
@@ -92,4 +93,8 @@ if __name__ == "__main__":
         use_keeper_content = use_keeper_template.render()
         with open(f'../node{curr_num_servers + i}-config/use-keeper.xml','w') as f3:
             f3.write(use_keeper_content)
+
+        storage_policy_content = storage_policy_template.render(server_num=curr_num_servers+i)
+        with open(f'../node{curr_num_servers + i}-config/storage-policy.xml','w') as f4:
+            f4.write(storage_policy_content)
 
