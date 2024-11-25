@@ -20,7 +20,7 @@ if __name__ == "__main__":
     # extracting only 'server1','server2'...
     all_service_names = [ name.split('-')[-1] for name in all_service_names]
 
-    curr_num_servers = sorted(all_service_names)[-1][-1]
+    curr_num_servers = int(sorted(all_service_names)[-1][-1])
 
     replication_factor = 2
     curr_num_shards = curr_num_servers/replication_factor
@@ -57,21 +57,27 @@ if __name__ == "__main__":
         output_path = f'../node{i}-config/remote-servers.xml' 
         curr_remote_servers_xml.write(output_path, encoding='utf-8', xml_declaration=False)
 
-    env = Environment(loader=FileSystemLoader('.'))
+    env = Environment(loader=FileSystemLoader('../jinja-templates'))
     service_template = env.get_template('service.yml.jinja')
+    volume_template = env.get_template('volume.yml.jinja')
 
     # loading existing docker-compose file
     with open('../docker-compose.yaml','r') as f:
         compose_f = yaml.safe_load(f)
     
     # rendering the new service
-    new_service1 = service_template.render(server_num=curr_num_servers+1)
-    new_service2 = service_template.render(server_num=curr_num_servers+2)
+    new_service1 = yaml.safe_load(service_template.render(server_num=curr_num_servers+1))
+    new_service2 = yaml.safe_load(service_template.render(server_num=curr_num_servers+2))
+
+    new_volume1 = yaml.safe_load(volume_template.render(server_num=curr_num_servers+1))
+    new_volume2 = yaml.safe_load(volume_template.render(server_num=curr_num_servers+2))
     
     # adding the new service to docker-compose
     compose_f['services'].update(new_service1)
     compose_f['services'].update(new_service2)
-
+    compose_f['volumes'].update(new_volume1)
+    compose_f['volumes'].update(new_volume2)
+    
     if compose_f:
         with open('../docker-compose.yaml','w') as yamlfile:
             yaml.safe_dump(compose_f, yamlfile)

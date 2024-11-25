@@ -3,7 +3,7 @@ clickhouse-server{{server_num}}:
     container_name: clickhouse-server{{server_num}}
     volumes:
       - ./node{{server_num}}-config/:/etc/clickhouse-server/config.d/
-      - clickhouse_data{{server_num}}:/var/lib/clickhouse
+      - clickhouse_server{{server_num}}_data:/var/lib/clickhouse
     networks:
       clickhouse-server-network:
         aliases:
@@ -17,10 +17,10 @@ clickhouse-server{{server_num}}:
       #   constraints: [node.labels.role == server]
       update_config:
         delay: 10s
-      # resources:
-      #   limits:
-      #     cpus: "0.50"
-      #     memory: 100M
+      resources:
+        limits:
+          cpus: "0.50"
+          memory: 100M
     depends_on:
       - clickhouse-keeper1
       - clickhouse-keeper2
