@@ -1,9 +1,4 @@
 services:
-  registry:
-    image: registry:2
-    ports:
-      - "5000:5000"
-      
   clickhouse-keeper1:
     image: clickhouse/clickhouse-server:latest
     container_name: clickhouse-keeper1
@@ -61,6 +56,8 @@ services:
     volumes:
       - ./node1-config/:/etc/clickhouse-server/config.d/
       - clickhouse_data1:/var/lib/clickhouse
+      - ./server_TTL/server1/hot/:/clickhouse_data/server1/hot/
+      - ./server_TTL/server1/cold/:/clickhouse_data/server1/cold/
     networks:
       clickhouse-server-network:
         aliases:
@@ -92,6 +89,8 @@ services:
     volumes:
       - ./node2-config/:/etc/clickhouse-server/config.d/
       - clickhouse_data2:/var/lib/clickhouse
+      - ./server_TTL/server2/hot/:/clickhouse_data/server2/hot/
+      - ./server_TTL/server2/cold/:/clickhouse_data/server2/cold/
     networks:
       clickhouse-server-network:
         aliases:
