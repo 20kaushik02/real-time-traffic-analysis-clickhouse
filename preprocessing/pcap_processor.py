@@ -19,7 +19,7 @@ class KafkaClient:
         self.topic_name = topic_name
         if mode == 'producer':
             self.client = KafkaProducer(
-                bootstrap_servers=['kafka:9092'],
+                bootstrap_servers=['localhost:9092'],
                 max_request_size = 200000000,
                 #api_version=(0,11,5),
                 value_serializer=lambda x: json.dumps(x).encode('utf-8'))
@@ -186,7 +186,9 @@ if __name__ == "__main__":
 
     pkts = []
     cnt = 0
+    seen_count = 0
     for idx, pkt in enumerate(pcap_rdr):
+        seen_count += 1
         # filter packets
         if not pkt_filter(pkt):
             continue
@@ -209,6 +211,7 @@ if __name__ == "__main__":
             #print(f"streamed packet at index {idx} ")
             if idx > sample_size: break
     
+    print(f"total seen: {seen_count-1}")
     print(f"total streamed: {cnt}")
     # flush remaining
     if not streaming and len(pkts) > 0:
