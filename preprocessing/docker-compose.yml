@@ -1,0 +1,69 @@
+version: '3.8'
+
+services:
+  zookeeper:
+    image: confluentinc/cp-zookeeper:latest
+    networks:
+      kafka_network:
+        aliases:
+          - zookeeper
+    deploy:
+      replicas: 1
+      restart_policy:
+        condition: on-failure
+    environment:
+      ZOOKEEPER_CLIENT_PORT: 2181
+    ports:
+      - "2181:2181"
+
+  kafka:
+    image: confluentinc/cp-kafka:latest
+    depends_on:
+      - zookeeper
+    environment:
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+      KAFKA_LISTENERS: PLAINTEXT://0.0.0.0:9092
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:9092
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT
+      KAFKA_BROKER_ID: 1
+      KAFKA_MESSAGE_MAX_BYTES: 200000000
+      KAFKA_REPLICA_FETCH_MAX_BYTES: 200000000
+    networks:
+      kafka_network:
+        aliases:
+          - kafka
+    ports:
+      - "9092:9092"
+    volumes:
+      - kafka_data:/var/lib/kafka/data
+    deploy:
+      replicas: 1
+      restart_policy:
+        condition: on-failure
+
+  pcap_streamer:
+    image: levenshtein/streamer_test3:latest
+    depends_on:
+      - kafka
+    networks:
+      kafka_network:
+        aliases:
+          - pcap_streamer
+    volumes:
+      - "/host_mnt/c/Users/akash/storage/Asu/sem3/dds/project:/data/pcap"
+    environment:
+      PCAP_FILE: /data/pcap/202310081400.pcap
+    command: ["sh", "-c", "sleep 30 && python /app/pcap_processor.py -f /data/pcap/202310081400.pcap -s --stream_size 1000"]
+    deploy:
+      replicas: 1
+      restart_policy:
+        condition: on-failure
+
+networks:
+  kafka_network:
+    driver: overlay
+    attachable: true
+
+volumes:
+  kafka_data:
+    driver: local

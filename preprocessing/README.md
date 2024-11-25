@@ -48,4 +48,4 @@
   - -d or --debug: boolean value indicating if program is run in debug mode
   
 
-python pcap_processor.py -f C:/Users/akash/storage/Asu/sem3/dds/project/202310081400.pcap -s --sample-size 1000
+python pcap_processor.py -f C:/Users/akash/storage/Asu/sem3/dds/project/202310081400.pcap -s --stream_size 1000
