@@ -92,7 +92,7 @@ if __name__ == "__main__":
         with open(f'../node{curr_num_servers + i}-config/config.xml','w') as f1:
             f1.write(config_content)
         
-        macros_content = macros_template.render(shard_num="0{curr_num_shards}",replica_num=i)
+        macros_content = macros_template.render(shard_num="0"+str(int(curr_num_shards+1)),replica_num=i)
         with open(f'../node{curr_num_servers + i}-config/macros.xml','w') as f2:
             f2.write(macros_content)
         

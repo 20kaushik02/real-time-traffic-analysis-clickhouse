@@ -2,8 +2,7 @@ services:
   clickhouse-keeper1:
     image: clickhouse/clickhouse-server:latest
     container_name: clickhouse-keeper1
-    command: >
-      /usr/bin/clickhouse-keeper --config-file=/etc/clickhouse-server/config.xml
+    command: /usr/bin/clickhouse-keeper --config-file=/etc/clickhouse-server/config.xml
     volumes:
       - ./clickhouse_keeper/keeper1-config.xml:/etc/clickhouse-server/config.xml
       - clickhouse_keeper1_data:/var/lib/clickhouse
@@ -16,8 +15,7 @@ services:
   clickhouse-keeper2:
     image: clickhouse/clickhouse-server:latest
     container_name: clickhouse-keeper2
-    command: >
-      /usr/bin/clickhouse-keeper --config-file=/etc/clickhouse-server/config.xml
+    command: /usr/bin/clickhouse-keeper --config-file=/etc/clickhouse-server/config.xml
     volumes:
       - ./clickhouse_keeper/keeper2-config.xml:/etc/clickhouse-server/config.xml
       - clickhouse_keeper2_data:/var/lib/clickhouse
@@ -29,8 +27,7 @@ services:
   clickhouse-keeper3:
     image: clickhouse/clickhouse-server:latest
     container_name: clickhouse-keeper3
-    command: >
-      /usr/bin/clickhouse-keeper --config-file=/etc/clickhouse-server/config.xml
+    command: /usr/bin/clickhouse-keeper --config-file=/etc/clickhouse-server/config.xml
     volumes:
       - ./clickhouse_keeper/keeper3-config.xml:/etc/clickhouse-server/config.xml
       - clickhouse_keeper3_data:/var/lib/clickhouse

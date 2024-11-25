@@ -1,11 +1,11 @@
 <storage_configuration>
     <disks>
         <hot_disk> 
-            <path>../clickhouse_data{{server_num}}/hot</path>
+            <path>/clickhouse_data{{server_num}}/hot</path>
             <keep_free_space_bytes>300000000</keep_free_space_bytes>
         </hot_disk>
         <cold_disk> 
-            <path>../clickhouse_data{{server_num}}/cold</path>
+            <path>/clickhouse_data{{server_num}}/cold</path>
             <keep_free_space_bytes>500000000</keep_free_space_bytes>
         </cold_disk>
     </disks>
