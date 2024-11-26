@@ -50,10 +50,13 @@ services:
         aliases:
           - pcap_streamer
     volumes:
-      - "/host_mnt/c/Users/akash/storage/Asu/sem3/dds/project:/data/pcap"
+      # - "/host_mnt/c/Users/akash/storage/Asu/sem3/dds/project:/data/pcap"
+      - "./:/data/pcap"
+      - "./:/data/csv"
     environment:
       PCAP_FILE: /data/pcap/202310081400.pcap
-    command: ["sh", "-c", "sleep 30 && python /app/pcap_processor.py -f /data/pcap/202310081400.pcap -s --stream_size 1000"]
+    # command: ["sh", "-c", "sleep 30 && python /app/pcap_processor.py -f /data/pcap/202310081400.pcap -s --stream_size 1000"]
+    command: ["sh", "-c", "sleep 30 && python /app/pcap_processor.py -c /data/csv/sample_output.csv -s --stream_size 1000"]
     deploy:
       replicas: 1
       restart_policy:
