@@ -18,14 +18,11 @@ if ($downStack)	{
 elseif ($MasterNode) {
 	Write-Output "[+] swarm master"
 
-	# cleanup
-	docker stack rm $stackName
-	docker service rm registry
-
 	# data streaming
 	Set-Location $scriptDir/../preprocessing
 	docker service create --name registry -p 5000:5000 registry:2
-	docker build -t 127.0.0.1:5000/data-streamer:latest --no-cache --push -f Dockerfile.python .
+	# docker build -t 127.0.0.1:5000/data-streamer:latest --no-cache --push -f Dockerfile.python .
+	docker build -t 127.0.0.1:5000/data-streamer:latest --push -f Dockerfile.python .
 
 	# execute
 	Set-Location $scriptDir

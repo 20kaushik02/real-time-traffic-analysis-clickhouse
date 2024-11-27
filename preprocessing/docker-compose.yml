@@ -28,6 +28,8 @@ services:
       KAFKA_BROKER_ID: 1
       KAFKA_MESSAGE_MAX_BYTES: 200000000
       KAFKA_REPLICA_FETCH_MAX_BYTES: 200000000
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+    command: sh -c "/etc/confluent/docker/run && kafka-topics --create --bootstrap-server kafka:9092 --replication-factor 1 --partitions 1 --topic traffic_records_stream"
     networks:
       data-network:
         aliases:
