@@ -2,7 +2,7 @@ services:
   zookeeper:
     image: confluentinc/cp-zookeeper:latest
     networks:
-      kafka_network:
+      data-network:
         aliases:
           - zookeeper
     deploy:
@@ -13,6 +13,8 @@ services:
       ZOOKEEPER_CLIENT_PORT: 2181
     ports:
       - "2181:2181"
+    volumes:
+      - zk_data:/var/lib/zookeeper/data
 
   kafka:
     image: confluentinc/cp-kafka:latest
@@ -27,7 +29,7 @@ services:
       KAFKA_MESSAGE_MAX_BYTES: 200000000
       KAFKA_REPLICA_FETCH_MAX_BYTES: 200000000
     networks:
-      kafka_network:
+      data-network:
         aliases:
           - kafka
     ports:
@@ -39,16 +41,16 @@ services:
       restart_policy:
         condition: on-failure
 
-  data_streamer:
-    image: 127.0.0.1:5000/data_streamer:latest
+  data-streamer:
+    image: 127.0.0.1:5000/data-streamer:latest
     depends_on:
       - kafka
     networks:
-      kafka_network:
+      data-network:
         aliases:
-          - data_streamer
+          - data-streamer
     volumes:
-      - "./10k_sample_2023_10_01-2023_10_31.csv:/data/csv/main.csv:ro"
+      - "../preprocessing/10k_sample_2023_10_01-2023_10_31.csv:/data/csv/main.csv:ro"
     command: "sh -c 'sleep 30 && python /app/pcap_processor.py -c /data/csv/main.csv -x --stream_size 100000'"
     deploy:
       replicas: 1
@@ -56,10 +58,12 @@ services:
         condition: on-failure
 
 networks:
-  kafka_network:
+  data-network:
     driver: overlay
     attachable: true
 
 volumes:
+  zk_data:
+    driver: local
   kafka_data:
     driver: local
