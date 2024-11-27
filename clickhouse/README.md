@@ -74,7 +74,7 @@ docker exec -it clickhouse-kafka-1 kafka-console-consumer --bootstrap-server kaf
 
 Get into the ClickHouse client:  
 ```bash
-docker exec -it <server1's container ID from docker ps> clickhouse-client
+docker exec -it <server1 container ID from docker ps> clickhouse-client
 ```  
 Check if tables are available:  
 ```bash
