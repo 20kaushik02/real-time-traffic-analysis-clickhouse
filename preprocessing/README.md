@@ -49,3 +49,4 @@
   
 
 python pcap_processor.py -f C:/Users/akash/storage/Asu/sem3/dds/project/202310081400.pcap -s --stream_size 1000
+python pcap_procesor.py -c sample_output.csv -s --stream_size 1000
