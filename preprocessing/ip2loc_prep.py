@@ -5,14 +5,15 @@ import csv
 sample_size = 100
 batch_size = 10000
 
-sample = True
+sample = False
 
 
 def int_to_ipv4(num: int) -> str:
     return socket.inet_ntoa(struct.pack("!L", num))
 
 
-with open("IP2LOCATION-LITE-DB3.csv", "r") as input_file, open(
+# with open("IP2LOCATION-LITE-DB3.csv", "r") as input_file, open(
+with open("IP2LOCATION-LITE-DB1.csv", "r") as input_file, open(
     "geoip.csv", "w", newline=""
 ) as output_file:
     reader = csv.reader(input_file)
@@ -21,11 +22,11 @@ with open("IP2LOCATION-LITE-DB3.csv", "r") as input_file, open(
     # header row
     writer.writerow(
         [
-            "ip_from",
-            "ip_to",
+            "ip_range_start",
+            "ip_range_end",
             "country",
-            "region",
-            "city",
+            # "region",
+            # "city",
         ]
     )
 
@@ -35,8 +36,8 @@ with open("IP2LOCATION-LITE-DB3.csv", "r") as input_file, open(
             int_to_ipv4(int(record[0])),
             int_to_ipv4(int(record[1])),
             record[3],
-            record[4],
-            record[5],
+            # record[4],
+            # record[5],
         ]
         records.append(new_record)
         if sample and idx > sample_size:
