@@ -189,11 +189,10 @@ if __name__ == "__main__":
     out_file = args._out
     streaming = args._stream
     sample = args._sample
-    samplesize = int(args._streamsize)
 
     DEBUG = args._debug
 
-    sample_size = samplesize #1000000
+    sample_size = int(args._samplesize) #1000000
     batch_size = 100 #100000
 
     # if preprocessed data ready for streaming
@@ -243,9 +242,8 @@ if __name__ == "__main__":
                 packet_data = create_pkt_object(pkt)
                 producer.client.send(KAFKA_TOPIC, packet_data)
                 cnt += 1
-                # print(f"streamed packet at index {idx} ")
-                if idx > sample_size:
-                    break
+                #print(f"streamed packet at index {idx} ")
+                if idx > sample_size: break
 
         print(f"total seen: {seen_count-1}")
         print(f"total streamed: {cnt}")
