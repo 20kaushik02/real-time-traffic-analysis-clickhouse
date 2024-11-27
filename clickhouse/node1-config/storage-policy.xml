@@ -1,0 +1,27 @@
+<clickhouse>
+    <storage_configuration>
+        <disks>
+            <hot_disk> 
+                <path>/clickhouse_data/server1/hot/</path>
+            </hot_disk>
+            <cold_disk> 
+                <path>/clickhouse_data/server1/cold/</path>
+            </cold_disk>
+        </disks>
+        <policies>
+            <hot_cold>
+                <volumes>
+                    <hot_vol>
+                        <disk>hot_disk</disk>
+                        <max_data_part_size_bytes>1073741824</max_data_part_size_bytes>
+                    </hot_vol>
+                    <cold_vol>
+                        <disk>cold_disk</disk>
+                        <max_data_part_size_bytes>1073741824</max_data_part_size_bytes>
+                    </cold_vol>
+                </volumes>
+                <move_factor>0.2</move_factor>
+            </hot_cold>
+        </policies>
+    </storage_configuration>
+</clickhouse>

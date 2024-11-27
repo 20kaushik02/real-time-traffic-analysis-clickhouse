@@ -3,6 +3,7 @@
         <cluster_1S_2R>
             <secret>mysecretphrase</secret>
             <shard>
+                <weight>1</weight>
                 <internal_replication>true</internal_replication>
                 <replica>
                     <host>clickhouse-server1</host>

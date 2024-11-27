@@ -10,9 +10,8 @@ services:
       - ./clickhouse_data/tmp:/var/lib/clickhouse/tmp
       - ./clickhouse_data/user_files:/var/lib/clickhouse/user_files
       - ./clickhouse_data/format_schemas:/var/lib/clickhouse/format_schemas
-
     networks:
-      clickhouse-keeper-network:
+      common-network:
         aliases:
           - clickhouse-keeper1
 
@@ -27,9 +26,8 @@ services:
       - ./clickhouse_data/tmp:/var/lib/clickhouse/tmp
       - ./clickhouse_data/user_files:/var/lib/clickhouse/user_files
       - ./clickhouse_data/format_schemas:/var/lib/clickhouse/format_schemas
-
     networks:
-      clickhouse-keeper-network:
+      common-network:
         aliases:
           - clickhouse-keeper2
 
@@ -44,9 +42,8 @@ services:
       - ./clickhouse_data/tmp:/var/lib/clickhouse/tmp
       - ./clickhouse_data/user_files:/var/lib/clickhouse/user_files
       - ./clickhouse_data/format_schemas:/var/lib/clickhouse/format_schemas
-
     networks:
-      clickhouse-keeper-network:
+      common-network:
         aliases:
           - clickhouse-keeper3
 
@@ -57,22 +54,9 @@ services:
       - ./node1-config/:/etc/clickhouse-server/config.d/
       - clickhouse_data1:/var/lib/clickhouse
     networks:
-      clickhouse-server-network:
+      common-network:
         aliases:
           - clickhouse-server1
-      clickhouse-keeper-network:
-        aliases:
-          - clickhouse-server1
-    deploy:
-      replicas: 1
-      # placement:
-      #   constraints: [node.labels.role == server]
-      update_config:
-        delay: 10s
-      # resources:
-      #   limits:
-      #     cpus: "0.50"
-      #     memory: 100M
     depends_on:
       - clickhouse-keeper1
       - clickhouse-keeper2
@@ -88,38 +72,84 @@ services:
       - ./node2-config/:/etc/clickhouse-server/config.d/
       - clickhouse_data2:/var/lib/clickhouse
     networks:
-      clickhouse-server-network:
+      common-network:
         aliases:
           - clickhouse-server2
-      clickhouse-keeper-network:
-        aliases:
-          - clickhouse-server2
-    deploy:
-      replicas: 1
-      # placement:
-      #   constraints: [node.labels.role == server]
-      update_config:
-        delay: 10s
-      # resources:
-      #   limits:
-      #     cpus: "0.50"
-      #     memory: 100M
     depends_on:
       - clickhouse-keeper1
       - clickhouse-keeper2
       - clickhouse-keeper3
     ports:
       - "9002:9000"  # Native client port
-      - "8124:8123"  # HTTP interface
+      - "8125:8123"  # HTTP interface
+
+  zookeeper:
+    image: confluentinc/cp-zookeeper:latest
+    networks:
+      common-network:
+        aliases:
+          - zookeeper
+    deploy:
+      replicas: 1
+      restart_policy:
+        condition: on-failure
+    environment:
+      ZOOKEEPER_CLIENT_PORT: 2182
+    ports:
+      - "2182:2181"
+
+  kafka:
+    image: confluentinc/cp-kafka:latest
+    depends_on:
+      - zookeeper
+    environment:
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2182
+      KAFKA_LISTENERS: PLAINTEXT://0.0.0.0:9092
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:9092
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT
+      KAFKA_BROKER_ID: 1
+      KAFKA_MESSAGE_MAX_BYTES: 200000000
+      KAFKA_REPLICA_FETCH_MAX_BYTES: 200000000
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+    networks:
+      common-network:
+        aliases:
+          - kafka
+    ports:
+      - "9092:9092"
+    volumes:
+      - kafka_data_new:/var/lib/kafka/data
+    deploy:
+      replicas: 1
+      restart_policy:
+        condition: on-failure
+
+  pcap_streamer:
+    image: levenshtein/streamer_test7:latest
+    depends_on:
+      - kafka
+    networks:
+      common-network:
+        aliases:
+          - pcap_streamer
+    volumes:
+      #- "/host_mnt/c/Users/akash/storage/Asu/sem3/dds/project:/data/pcap"
+      - "/host_mnt/c/Users/akash/storage/Asu/sem3/dds/project/project_github/real-time-traffic-analysis-clickhouse/preprocessing:/data/pcap"
+    command: ["sh", "-c", "sleep 60 && python /app/pcap_processor.py -c /data/pcap/sample_output.csv -s --stream_size 1000"]
+    deploy:
+      replicas: 1
+      restart_policy:
+        condition: on-failure
 
 networks:
-  clickhouse-server-network:
+  common-network:
     driver: overlay
-  clickhouse-keeper-network:
-    driver: overlay
+    attachable: true
 
 volumes:
   clickhouse_data1:
     driver: local
   clickhouse_data2:
+    driver: local
+  kafka_data_new:
     driver: local
