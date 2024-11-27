@@ -125,7 +125,7 @@ services:
         condition: on-failure
 
   pcap_streamer:
-    image: levenshtein/streamer_test4:latest
+    image: levenshtein/streamer_test7:latest
     depends_on:
       - kafka
     networks:
@@ -133,10 +133,9 @@ services:
         aliases:
           - pcap_streamer
     volumes:
-      - "/host_mnt/c/Users/akash/storage/Asu/sem3/dds/project:/data/pcap"
-    environment:
-      PCAP_FILE: /data/pcap/202310081400.pcap
-    command: ["sh", "-c", "sleep 30 && python /app/pcap_processor.py -f /data/pcap/202310081400.pcap -s --stream_size 1000"]
+      #- "/host_mnt/c/Users/akash/storage/Asu/sem3/dds/project:/data/pcap"
+      - "/host_mnt/c/Users/akash/storage/Asu/sem3/dds/project/project_github/real-time-traffic-analysis-clickhouse/preprocessing:/data/pcap"
+    command: ["sh", "-c", "sleep 60 && python /app/pcap_processor.py -c /data/pcap/sample_output.csv -s --stream_size 1000"]
     deploy:
       replicas: 1
       restart_policy:

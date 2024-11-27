@@ -19,7 +19,7 @@ class KafkaClient:
         self.topic_name = topic_name
         if mode == 'producer':
             self.client = KafkaProducer(
-                bootstrap_servers=['localhost:9092'],
+                bootstrap_servers=['kafka:9092'],
                 max_request_size = 200000000,
                 #api_version=(0,11,5),
                 value_serializer=lambda x: json.dumps(x).encode('utf-8'))
@@ -192,11 +192,12 @@ if __name__ == "__main__":
 
     DEBUG = args._debug
 
-    sample_size = int(args._samplesize) #1000000
+    sample_size = int(args._streamsize)  # 100000
     batch_size = 100 #100000
 
     # if preprocessed data ready for streaming
     if csv_file:
+        #print("true")
         with open(csv_file, newline="") as f:
             csv_rdr = csv.reader(f)
             next(csv_rdr)  # skip headers
@@ -206,10 +207,10 @@ if __name__ == "__main__":
                 # direct streaming to kafka goes here
                 producer.client.send(KAFKA_TOPIC, row_to_dict(row))
                 dbg_print(row_to_dict(row))
-                dbg_print("streamed packet", idx)
+                print("streamed packet", idx)
                 if idx > sample_size:
                     break
-            dbg_print(f"total streamed: {idx}")
+            print(f"total streamed: {idx}")
 
     # otherwise, process packets
     else:
