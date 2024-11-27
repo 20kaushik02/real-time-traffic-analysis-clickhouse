@@ -208,7 +208,7 @@ if __name__ == "__main__":
                 producer.client.send(KAFKA_TOPIC, row_to_dict(row))
                 dbg_print(row_to_dict(row))
                 print("streamed packet", idx)
-                if idx > sample_size:
+                if sample and idx > sample_size:
                     break
             print(f"total streamed: {idx}")
 

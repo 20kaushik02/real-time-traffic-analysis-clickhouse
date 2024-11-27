@@ -1,5 +1,3 @@
-version: '3.8'
-
 services:
   zookeeper:
     image: confluentinc/cp-zookeeper:latest
@@ -41,22 +39,17 @@ services:
       restart_policy:
         condition: on-failure
 
-  pcap_streamer:
-    image: levenshtein/streamer_test3:latest
+  data_streamer:
+    image: 127.0.0.1:5000/data_streamer:latest
     depends_on:
       - kafka
     networks:
       kafka_network:
         aliases:
-          - pcap_streamer
+          - data_streamer
     volumes:
-      # - "/host_mnt/c/Users/akash/storage/Asu/sem3/dds/project:/data/pcap"
-      - "./:/data/pcap"
-      - "./:/data/csv"
-    environment:
-      PCAP_FILE: /data/pcap/202310081400.pcap
-    # command: ["sh", "-c", "sleep 30 && python /app/pcap_processor.py -f /data/pcap/202310081400.pcap -s --stream_size 1000"]
-    command: ["sh", "-c", "sleep 30 && python /app/pcap_processor.py -c /data/csv/sample_output.csv -s --stream_size 1000"]
+      - "./10k_sample_2023_10_01-2023_10_31.csv:/data/csv/main.csv:ro"
+    command: "sh -c 'sleep 30 && python /app/pcap_processor.py -c /data/csv/main.csv -x --stream_size 100000'"
     deploy:
       replicas: 1
       restart_policy:
