@@ -41,6 +41,8 @@ services:
     container_name: clickhouse-server1
     volumes:
       - ../clickhouse/node1-config/:/etc/clickhouse-server/config.d/
+      - ../clickhouse/ddl/common/table_create.sql:/docker-entrypoint-initdb.d/common_table_create.sql
+      - ../clickhouse/ddl/distr/table_create.sql:/docker-entrypoint-initdb.d/distr_table_create.sql
       - clickhouse_server1_data:/var/lib/clickhouse
       - clickhouse_server1_TTL:/clickhouse_data/server1
     networks:
@@ -50,7 +52,7 @@ services:
       clickhouse-keeper-network:
         aliases:
           - clickhouse-server1
-      data_network:
+      data-network:
         aliases:
           - clickhouse-server1
     deploy:
@@ -77,6 +79,7 @@ services:
     container_name: clickhouse-server2
     volumes:
       - ../clickhouse/node2-config/:/etc/clickhouse-server/config.d/
+      - ../clickhouse/ddl/common/table_create.sql:/docker-entrypoint-initdb.d/common_table_create.sql
       - clickhouse_server2_data:/var/lib/clickhouse
       - clickhouse_server2_TTL:/clickhouse_data/server2
     networks:

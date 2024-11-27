@@ -31,7 +31,7 @@ elseif ($MasterNode) {
 	Set-Location $scriptDir
 	docker stack deploy -d `
 		-c ../preprocessing/docker-compose.yml `
-		-c ../clickhouse/docker-compose-old.yaml `
+		-c ../clickhouse/docker-compose.yaml `
 		$stackName
 
 	# scripts
