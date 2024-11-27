@@ -10,6 +10,11 @@
     <listen_host>0.0.0.0</listen_host>
     <http_port>8123</http_port>
     <tcp_port>9000</tcp_port>
+
+    <!-- https://clickhouse.com/docs/en/operations/tips#using-less-than-16gb-of-ram -->
+    <mark_cache_size>536870912</mark_cache_size> <!-- 512MB -->
+    <concurrent_threads_soft_limit_num>2</concurrent_threads_soft_limit_num>
+
     <!-- Maximum connections and settings -->
     <max_connections>4096</max_connections>
     <keep_alive_timeout>3</keep_alive_timeout>
