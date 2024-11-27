@@ -1,0 +1,29 @@
+services:
+  grafana:
+    image: grafana/grafana-oss
+    container_name: grafana
+    volumes:
+      - grafana-storage:/var/lib/grafana
+      - ../ui/grafana_clickhouse_datasource.yaml:/etc/grafana/provisioning/datasources/clickhouse.yaml # relative to clickhouse directory
+    networks:
+      outside_net:
+        aliases:
+          - grafana
+      clickhouse-server-network:
+        aliases:
+          - grafana
+    depends_on:
+      - clickhouse-server1
+    environment:
+      - GF_INSTALL_PLUGINS=grafana-clickhouse-datasource
+      - GF_SECURITY_ADMIN_USER=thewebfarm
+      - GF_SECURITY_ADMIN_PASSWORD=mrafbeweht
+    ports:
+      - "7602:3000"
+
+networks:
+  outside_net:
+    attachable: true
+
+volumes:
+  grafana-storage:
