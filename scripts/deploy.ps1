@@ -29,6 +29,7 @@ elseif ($MasterNode) {
 	docker stack deploy -d `
 		-c ../preprocessing/docker-compose.yml `
 		-c ../clickhouse/docker-compose.yaml `
+		-c ../ui/docker-compose.yaml `
 		$stackName
 
 	# scripts
