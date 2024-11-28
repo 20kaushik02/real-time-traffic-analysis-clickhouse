@@ -12,36 +12,33 @@ import json
 dbg_print = lambda *x: DEBUG and print(f"[DEBUG] {x}")
 
 
+# Kafka Configuration
+KAFKA_TOPIC = "traffic_records_stream"
+KAFKA_SERVER = "kafka:9092"  # Adjust to your Kafka server
+
 
 class KafkaClient:
-    def __init__(self, topic_name=None, mode='producer'):
+    def __init__(self, topic_name=None, mode="producer"):
         self.mode = mode
         self.topic_name = topic_name
-        if mode == 'producer':
+        if mode == "producer":
             self.client = KafkaProducer(
-                bootstrap_servers=['kafka:9092'],
-                max_request_size = 200000000,
-                #api_version=(0,11,5),
-                value_serializer=lambda x: json.dumps(x).encode('utf-8'))
-        elif mode == 'consumer' and topic_name is not None:
+                bootstrap_servers=[KAFKA_SERVER],
+                max_request_size=200000000,
+                # api_version=(0,11,5),
+                value_serializer=lambda x: json.dumps(x).encode("utf-8"),
+            )
+        elif mode == "consumer" and topic_name is not None:
             self.client = KafkaConsumer(
-                topic_name, 
-                bootstrap_servers=['localhost:9092'],
-                api_version=(0,11,5),
-                value_deserializer=lambda x: json.loads(x.decode('utf-8')))
+                topic_name,
+                bootstrap_servers=["localhost:9092"],
+                api_version=(0, 11, 5),
+                value_deserializer=lambda x: json.loads(x.decode("utf-8")),
+            )
         else:
             raise ValueError("Consumer mode requires a topic_name")
 
-# Kafka Configuration
-KAFKA_TOPIC = 'pcap_stream_new'
-KAFKA_SERVER = 'kafka:9092'  # Adjust to your Kafka server
-#KAFKA_SERVER = 'kafka_service:9092'  
 
-# Initialize Kafka Producer
-# producer = KafkaProducer(
-#     bootstrap_servers=KAFKA_SERVER,
-#     value_serializer=lambda v: v.encode('utf-8') if isinstance(v, str) else str(v).encode('utf-8') #remove intermediate JSON encoding
-# )
 producer = KafkaClient(topic_name=KAFKA_TOPIC)
 
 
@@ -108,7 +105,7 @@ def create_pkt_object(pkt: Packet) -> dict:
         "dst_addr": pkt[IP].dst,
         "src_port": pkt[l4_proto].sport,
         "dst_port": pkt[l4_proto].dport,
-        "pkt_len": len(pkt)
+        "pkt_len": len(pkt),
     }
 
     return res_json
@@ -157,7 +154,9 @@ if __name__ == "__main__":
     argp.add_argument("-f", "--pcap_file", required=False, dest="_pcap")
     argp.add_argument("-c", "--csv_file", required=False, dest="_csv")
     argp.add_argument("-o", "--out_file", required=False, dest="_out")
-    argp.add_argument("--stream_size", required=False, default=10000, dest="_streamsize")
+    argp.add_argument(
+        "--stream_size", required=False, default=10000, dest="_streamsize"
+    )
     argp.add_argument(
         "-x",
         "--sample",
@@ -193,21 +192,21 @@ if __name__ == "__main__":
     DEBUG = args._debug
 
     sample_size = int(args._streamsize)  # 100000
-    batch_size = 100 #100000
+    batch_size = 100  # 100000
 
     # if preprocessed data ready for streaming
     if csv_file:
-        #print("true")
         with open(csv_file, newline="") as f:
             csv_rdr = csv.reader(f)
             next(csv_rdr)  # skip headers
             pkts = []
 
+            print("started stream from csv")
             for idx, row in enumerate(csv_rdr):
                 # direct streaming to kafka goes here
                 producer.client.send(KAFKA_TOPIC, row_to_dict(row))
                 dbg_print(row_to_dict(row))
-                print("streamed packet", idx)
+                dbg_print("streamed packet", idx)
                 if sample and idx > sample_size:
                     break
             print(f"total streamed: {idx}")
@@ -222,6 +221,8 @@ if __name__ == "__main__":
         pkts = []
         cnt = 0
         seen_count = 0
+
+        print("started stream from pcap")
         for idx, pkt in enumerate(pcap_rdr):
             seen_count += 1
             # filter packets
@@ -243,8 +244,9 @@ if __name__ == "__main__":
                 packet_data = create_pkt_object(pkt)
                 producer.client.send(KAFKA_TOPIC, packet_data)
                 cnt += 1
-                #print(f"streamed packet at index {idx} ")
-                if idx > sample_size: break
+                # print(f"streamed packet at index {idx} ")
+                if idx > sample_size:
+                    break
 
         print(f"total seen: {seen_count-1}")
         print(f"total streamed: {cnt}")

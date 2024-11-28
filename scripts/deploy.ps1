@@ -14,24 +14,24 @@ if ($downStack)	{
 	Write-Output "[+] Removing stack..."
 	docker stack rm $stackName
 	docker service rm registry
+	Start-Sleep 20
+	docker volume rm $(docker volume ls --filter name=$stackName -q)
 }
 elseif ($MasterNode) {
 	Write-Output "[+] swarm master"
 
-	# cleanup
-	docker stack rm $stackName
-	docker service rm registry
-
 	# data streaming
 	Set-Location $scriptDir/../preprocessing
 	docker service create --name registry -p 5000:5000 registry:2
-	docker build -t 127.0.0.1:5000/data-streamer:latest --no-cache --push -f Dockerfile.python .
+	# docker build -t 127.0.0.1:5000/data-streamer:latest --no-cache --push -f Dockerfile.python .
+	docker build -t 127.0.0.1:5000/data-streamer:latest --push -f Dockerfile.python .
 
 	# execute
 	Set-Location $scriptDir
 	docker stack deploy -d `
 		-c ../preprocessing/docker-compose.yml `
 		-c ../clickhouse/docker-compose.yaml `
+		-c ../ui/docker-compose.yaml `
 		$stackName
 
 	# scripts

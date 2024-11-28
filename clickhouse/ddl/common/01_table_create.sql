@@ -18,8 +18,8 @@ SETTINGS storage_policy = 'hot_cold';
 
 CREATE TABLE ip_region_map (
 	ip_range_start IPv4,
-	ip_range_end IPv4,
-	region String,
+	ip_range_end IPv4,	
+	region LowCardinality(String),
 	INDEX region_idx region TYPE bloom_filter
 ) ENGINE = ReplicatedMergeTree(
 	'/clickhouse/tables/{shard}/ip_region_map',
