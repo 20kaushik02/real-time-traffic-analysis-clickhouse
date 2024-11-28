@@ -14,7 +14,7 @@ if ($downStack)	{
 	Write-Output "[+] Removing stack..."
 	docker stack rm $stackName
 	docker service rm registry
-	Start-Sleep 15
+	Start-Sleep 20
 	docker volume rm $(docker volume ls --filter name=$stackName -q)
 }
 elseif ($MasterNode) {

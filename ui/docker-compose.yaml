@@ -4,7 +4,9 @@ services:
     container_name: grafana
     volumes:
       - grafana-storage:/var/lib/grafana
-      - ../ui/grafana_clickhouse_datasource.yaml:/etc/grafana/provisioning/datasources/clickhouse.yaml
+      - ../ui/grafana_clickhouse_datasource.yaml:/etc/grafana/provisioning/datasources/clickhouse.yaml:ro
+      - ../ui/grafana_dashboards.yaml:/etc/grafana/provisioning/dashboards/grafana_dashboards.yaml:ro
+      - ../ui/dashboard_1.json:/var/lib/grafana/dashboards/dashboard_1.json
     networks:
       outside_net:
         aliases:

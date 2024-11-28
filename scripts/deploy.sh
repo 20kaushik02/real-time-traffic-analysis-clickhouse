@@ -23,7 +23,7 @@ if [[ $downStack ]]; then
 	echo "[+] Removing stack..."
 	docker stack rm $stackName
 	docker service rm registry
-	sleep 10
+	sleep 20
 	docker volume rm $(docker volume ls --filter name=$stackName -q)
 elif ($MasterNode); then
 	echo "[+] swarm master"
