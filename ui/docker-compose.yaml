@@ -14,6 +14,9 @@ services:
       clickhouse-server-network:
         aliases:
           - grafana
+    deploy:
+      placement:
+        constraints: [node.labels.worker == true]
     depends_on:
       - clickhouse-server1
     environment:

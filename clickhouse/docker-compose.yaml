@@ -11,6 +11,9 @@ services:
       clickhouse-keeper-network:
         aliases:
           - clickhouse-keeper1
+    deploy:
+      placement:
+        constraints: [node.labels.main == true]
 
   clickhouse-keeper2:
     image: clickhouse/clickhouse-server:latest
@@ -23,6 +26,9 @@ services:
       clickhouse-keeper-network:
         aliases:
           - clickhouse-keeper2
+    deploy:
+      placement:
+        constraints: [node.labels.main == true]
 
   clickhouse-keeper3:
     image: clickhouse/clickhouse-server:latest
@@ -35,6 +41,9 @@ services:
       clickhouse-keeper-network:
         aliases:
           - clickhouse-keeper3
+    deploy:
+      placement:
+        constraints: [node.labels.main == true]
 
   clickhouse-server1:
     image: clickhouse/clickhouse-server:latest
@@ -56,8 +65,8 @@ services:
           - clickhouse-server1
     deploy:
       replicas: 1
-      # placement:
-      #   constraints: [node.labels.role == server]
+      placement:
+        constraints: [node.labels.main == true]
       update_config:
         delay: 10s
       resources:
@@ -90,8 +99,8 @@ services:
           - clickhouse-server2
     deploy:
       replicas: 1
-      # placement:
-      #   constraints: [node.labels.role == server]
+      placement:
+        constraints: [node.labels.main == true]
       update_config:
         delay: 10s
       resources:
