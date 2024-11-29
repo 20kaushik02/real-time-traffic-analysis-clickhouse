@@ -1,6 +1,7 @@
 from argparse import ArgumentParser
 from datetime import datetime, timezone
 import csv
+import time
 
 from scapy.packet import Packet
 from scapy.utils import PcapReader
@@ -174,6 +175,13 @@ if __name__ == "__main__":
         action="store_true",
     )
     argp.add_argument(
+        "-l",
+        "--delay",
+        required=False,
+        default=0,
+        dest="_delay"
+    )
+    argp.add_argument(
         "-d",
         "--debug",
         required=False,
@@ -187,6 +195,7 @@ if __name__ == "__main__":
     csv_file = args._csv
     out_file = args._out
     streaming = args._stream
+    batch_delay = float(args._delay)
     sample = args._sample
 
     DEBUG = args._debug
@@ -207,6 +216,8 @@ if __name__ == "__main__":
                 producer.client.send(KAFKA_TOPIC, row_to_dict(row))
                 dbg_print(row_to_dict(row))
                 dbg_print("streamed packet", idx)
+                if idx > 0 and idx % batch_size == 0:
+                    time.sleep(batch_delay)
                 if sample and idx > sample_size:
                     break
             print(f"total streamed: {idx}")
