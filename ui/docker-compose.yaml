@@ -15,8 +15,11 @@ services:
         aliases:
           - grafana
     deploy:
-      placement:
-        constraints: [node.labels.worker == true]
+      replicas: 1
+      # placement:
+      #   constraints: [node.labels.worker == true]
+      restart_policy:
+        condition: on-failure
     depends_on:
       - clickhouse-server1
     environment:

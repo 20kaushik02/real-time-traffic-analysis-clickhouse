@@ -34,8 +34,8 @@ elif ($masterNode); then
 	# data streaming
 	cd $scriptDir/../preprocessing
 	$dockerCmd service create --name registry -p 5000:5000 registry:2
-	$dockerCmd build -t 127.0.0.1:5000/data-streamer:latest --no-cache --push -f Dockerfile.python .
-	# $dockerCmd build -t 127.0.0.1:5000/data-streamer:latest --push -f Dockerfile.python .
+	# $dockerCmd build -t 127.0.0.1:5000/data-streamer:latest --no-cache --push -f Dockerfile.python .
+	$dockerCmd build -t 127.0.0.1:5000/data-streamer:latest --push -f Dockerfile.python .
 
 	# execute
 	cd $scriptDir

@@ -12,8 +12,11 @@ services:
         aliases:
           - clickhouse-keeper1
     deploy:
-      placement:
-        constraints: [node.labels.main == true]
+      replicas: 1
+      # placement:
+      #   constraints: [node.labels.main == true]
+      restart_policy:
+          condition: on-failure
 
   clickhouse-keeper2:
     image: clickhouse/clickhouse-server:latest
@@ -27,8 +30,11 @@ services:
         aliases:
           - clickhouse-keeper2
     deploy:
-      placement:
-        constraints: [node.labels.main == true]
+      replicas: 1
+      # placement:
+      #   constraints: [node.labels.main == true]
+      restart_policy:
+          condition: on-failure
 
   clickhouse-keeper3:
     image: clickhouse/clickhouse-server:latest
@@ -42,8 +48,11 @@ services:
         aliases:
           - clickhouse-keeper3
     deploy:
-      placement:
-        constraints: [node.labels.main == true]
+      replicas: 1
+      # placement:
+      #   constraints: [node.labels.main == true]
+      restart_policy:
+          condition: on-failure
 
   clickhouse-server1:
     image: clickhouse/clickhouse-server:latest
@@ -65,8 +74,10 @@ services:
           - clickhouse-server1
     deploy:
       replicas: 1
-      placement:
-        constraints: [node.labels.main == true]
+      # placement:
+      #   constraints: [node.labels.main == true]
+      restart_policy:
+          condition: on-failure
       update_config:
         delay: 10s
       resources:
@@ -99,8 +110,10 @@ services:
           - clickhouse-server2
     deploy:
       replicas: 1
-      placement:
-        constraints: [node.labels.main == true]
+      # placement:
+      #   constraints: [node.labels.main == true]
+      restart_policy:
+          condition: on-failure
       update_config:
         delay: 10s
       resources:
