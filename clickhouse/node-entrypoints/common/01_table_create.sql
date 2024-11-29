@@ -13,7 +13,7 @@ CREATE TABLE traffic_records (
 	'{replica}'
 )
 ORDER BY time_stamp
-TTL toDateTime(time_stamp) + INTERVAL 15 DAY TO VOLUME 'cold_vol'
+TTL toDateTime(time_stamp) + INTERVAL 410 DAY TO VOLUME 'cold_vol' -- october 15
 SETTINGS storage_policy = 'hot_cold';
 
 CREATE TABLE ip_region_map (

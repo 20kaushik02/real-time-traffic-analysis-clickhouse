@@ -2,8 +2,10 @@ clickhouse-server{{server_num}}:
     image: clickhouse/clickhouse-server:latest
     container_name: clickhouse-server{{server_num}}
     volumes:
-      - ./node{{server_num}}-config/:/etc/clickhouse-server/config.d/
+      - ../clickhouse/node{{server_num}}-config/:/etc/clickhouse-server/config.d/
+      - ../clickhouse/node-entrypoints/common:/docker-entrypoint-initdb.d
       - clickhouse_server{{server_num}}_data:/var/lib/clickhouse
+      - clickhouse_server{{server_num}}_TTL:/clickhouse_data/server{{server_num}}
     networks:
       clickhouse-server-network:
         aliases:
@@ -15,6 +17,8 @@ clickhouse-server{{server_num}}:
       replicas: 1
       # placement:
       #   constraints: [node.labels.role == server]
+      restart_policy:
+          condition: on-failure
       update_config:
         delay: 10s
       resources:
@@ -26,5 +30,5 @@ clickhouse-server{{server_num}}:
       - clickhouse-keeper2
       - clickhouse-keeper3
     ports:
-      - "900{{server_num}}:9000"  # Native client port
-      - "8123:8123"  # HTTP interface
+      - "{{9000+server_num}}:9000"  # Native client port
+      - "{{8123+server_num}}:8123"  # HTTP interface
