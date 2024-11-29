@@ -11,6 +11,7 @@ kafka_topic_list = 'traffic_records_stream',
 kafka_group_name = 'clickhouse_consumer',
 kafka_format = 'JSONEachRow',
 kafka_num_consumers = 1;
+
 CREATE MATERIALIZED VIEW traffic_records_kafka_view TO traffic_records_all AS
 SELECT time AS time_stamp,
 	l4_proto AS l4_protocol,
