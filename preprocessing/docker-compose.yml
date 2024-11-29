@@ -7,6 +7,8 @@ services:
           - zookeeper
     deploy:
       replicas: 1
+      # placement:
+      #   constraints: [node.labels.worker == true]
       restart_policy:
         condition: on-failure
     environment:
@@ -40,6 +42,8 @@ services:
       - kafka_data:/var/lib/kafka/data
     deploy:
       replicas: 1
+      # placement:
+      #   constraints: [node.labels.worker == true]
       restart_policy:
         condition: on-failure
 
@@ -53,9 +57,11 @@ services:
           - data-streamer
     volumes:
       - "../preprocessing/10k_sample_2023_10_01-2023_10_31.csv:/data/csv/main.csv:ro"
-    command: "sh -c 'sleep 30 && python /app/pcap_processor.py -c /data/csv/main.csv -x --stream_size 100000'"
+    command: "sh -c 'sleep 30 && python /app/pcap_processor.py -c /data/csv/main.csv -x --stream_size 100000 -l 0.1'"
     deploy:
       replicas: 1
+      # placement:
+      #   constraints: [node.labels.worker == true]
       restart_policy:
         condition: on-failure
 

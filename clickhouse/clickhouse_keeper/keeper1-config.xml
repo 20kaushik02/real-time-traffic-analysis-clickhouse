@@ -18,6 +18,12 @@
         <server_id>1</server_id>
         <log_storage_path>/var/lib/clickhouse/coordination/log</log_storage_path>
         <snapshot_storage_path>/var/lib/clickhouse/coordination/snapshots</snapshot_storage_path>
+        <http_control>
+            <port>9182</port>
+            <readiness>
+                <endpoint>/ready</endpoint>
+            </readiness>
+        </http_control>
         <coordination_settings>
             <operation_timeout_ms>10000</operation_timeout_ms>
             <session_timeout_ms>30000</session_timeout_ms>

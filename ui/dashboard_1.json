@@ -154,14 +154,17 @@
         "legend": {
           "displayMode": "list",
           "placement": "bottom",
-          "showLegend": true
+          "showLegend": true,
+          "values": [
+            "percent"
+          ]
         },
         "pieType": "pie",
         "reduceOptions": {
           "calcs": [
             "lastNotNull"
           ],
-          "fields": "/^ProtocolCount$/",
+          "fields": "/^Protocol frequency$/",
           "values": true
         },
         "tooltip": {
@@ -190,11 +193,11 @@
           },
           "pluginVersion": "4.5.1",
           "queryType": "table",
-          "rawSql": "SELECT\r\n  l4_protocol as Protocol,\r\n  COUNT(Protocol) as ProtocolCount\r\n  FROM traffic_records_all\r\n  GROUP BY Protocol",
+          "rawSql": "SELECT\r\n  l4_protocol as Protocol,\r\n  COUNT(Protocol) as \"Protocol frequency\"\r\n  FROM traffic_records_all\r\n  GROUP BY Protocol",
           "refId": "A"
         }
       ],
-      "title": "Distribution of L4 protocol",
+      "title": "Distribution of L4 protocol (frequency)",
       "type": "piechart"
     },
     {
@@ -287,11 +290,11 @@
           },
           "pluginVersion": "4.5.1",
           "queryType": "table",
-          "rawSql": "SELECT \r\n    Port, \r\n    SourcePortCount, \r\n    DestPortCount\r\nFROM\r\n(\r\n    SELECT \r\n        src_port AS Port, \r\n        COUNT(*) AS SourcePortCount\r\n    FROM traffic_records_all\r\n    GROUP BY src_port\r\n    ORDER BY SourcePortCount DESC\r\n    LIMIT 40\r\n) AS src\r\nINNER JOIN\r\n(\r\n    SELECT \r\n        dst_port AS Port, \r\n        COUNT(*) AS DestPortCount\r\n    FROM traffic_records_all\r\n    GROUP BY dst_port\r\n    ORDER BY DestPortCount DESC\r\n    LIMIT 40\r\n) AS dst\r\nUSING (Port)\r\nORDER BY (SourcePortCount + DestPortCount) DESC\r\nLIMIT 40;\r\n",
+          "rawSql": "SELECT \r\n    Port, \r\n    SourcePortCount AS \"Source port frequency\",\r\n    DestPortCount AS \"Destination port frequency\"\r\nFROM\r\n(\r\n    SELECT \r\n        src_port AS Port, \r\n        COUNT(*) AS SourcePortCount\r\n    FROM traffic_records_all\r\n    GROUP BY src_port\r\n    ORDER BY SourcePortCount DESC\r\n    LIMIT 40\r\n) AS src\r\nINNER JOIN\r\n(\r\n    SELECT \r\n        dst_port AS Port, \r\n        COUNT(*) AS DestPortCount\r\n    FROM traffic_records_all\r\n    GROUP BY dst_port\r\n    ORDER BY DestPortCount DESC\r\n    LIMIT 40\r\n) AS dst\r\nUSING (Port)\r\nORDER BY (SourcePortCount + DestPortCount) DESC\r\nLIMIT 40;\r\n",
           "refId": "A"
         }
       ],
-      "title": "Top ports (by count)",
+      "title": "Top ports (frequency)",
       "type": "barchart"
     },
     {
@@ -305,67 +308,48 @@
             "mode": "palette-classic"
           },
           "custom": {
-            "axisBorderShow": false,
-            "axisCenteredZero": false,
-            "axisColorMode": "text",
-            "axisLabel": "",
-            "axisPlacement": "auto",
-            "fillOpacity": 80,
-            "gradientMode": "none",
             "hideFrom": {
               "legend": false,
               "tooltip": false,
               "viz": false
-            },
-            "lineWidth": 1,
-            "scaleDistribution": {
-              "type": "linear"
-            },
-            "thresholdsStyle": {
-              "mode": "off"
             }
           },
-          "mappings": [],
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green",
-                "value": null
-              }
-            ]
-          }
+          "mappings": []
         },
         "overrides": []
       },
       "gridPos": {
         "h": 8,
-        "w": 12,
-        "x": 0,
-        "y": 16
+        "w": 6,
+        "x": 18,
+        "y": 8
       },
-      "id": 2,
+      "id": 6,
       "options": {
-        "barRadius": 0,
-        "barWidth": 0.97,
-        "fullHighlight": false,
-        "groupWidth": 0.7,
+        "displayLabels": [
+          "percent",
+          "name"
+        ],
         "legend": {
-          "calcs": [],
           "displayMode": "list",
           "placement": "bottom",
-          "showLegend": true
+          "showLegend": true,
+          "values": [
+            "percent"
+          ]
         },
-        "orientation": "horizontal",
-        "showValue": "auto",
-        "stacking": "none",
+        "pieType": "pie",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "/^Protocol bandwidth$/",
+          "values": true
+        },
         "tooltip": {
           "mode": "single",
           "sort": "none"
-        },
-        "xField": "SourcePort",
-        "xTickLabelRotation": 0,
-        "xTickLabelSpacing": 100
+        }
       },
       "pluginVersion": "11.3.1",
       "targets": [
@@ -384,109 +368,12 @@
           },
           "pluginVersion": "4.5.1",
           "queryType": "table",
-          "rawSql": "SELECT\r\n  src_port as SourcePort,\r\n  COUNT(SourcePort) as SourcePortCount\r\n  FROM traffic_records_all\r\n  GROUP BY SourcePort\r\n  ORDER BY SourcePortCount DESC\r\n  LIMIT 10",
+          "rawSql": "SELECT\n  l4_protocol as Protocol,\n  SUM(pkt_len)/1024.0/1024.0 as \"Protocol bandwidth\"\n  FROM traffic_records_all\n  GROUP BY Protocol",
           "refId": "A"
         }
       ],
-      "title": "Top 10 source ports (by count)",
-      "type": "barchart"
-    },
-    {
-      "datasource": {
-        "type": "grafana-clickhouse-datasource",
-        "uid": "PDEE91DDB90597936"
-      },
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "palette-classic"
-          },
-          "custom": {
-            "axisBorderShow": false,
-            "axisCenteredZero": false,
-            "axisColorMode": "text",
-            "axisLabel": "",
-            "axisPlacement": "auto",
-            "fillOpacity": 80,
-            "gradientMode": "none",
-            "hideFrom": {
-              "legend": false,
-              "tooltip": false,
-              "viz": false
-            },
-            "lineWidth": 1,
-            "scaleDistribution": {
-              "type": "linear"
-            },
-            "thresholdsStyle": {
-              "mode": "off"
-            }
-          },
-          "mappings": [],
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green",
-                "value": null
-              }
-            ]
-          }
-        },
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 8,
-        "w": 12,
-        "x": 12,
-        "y": 16
-      },
-      "id": 3,
-      "options": {
-        "barRadius": 0,
-        "barWidth": 0.97,
-        "fullHighlight": false,
-        "groupWidth": 0.7,
-        "legend": {
-          "calcs": [],
-          "displayMode": "list",
-          "placement": "bottom",
-          "showLegend": true
-        },
-        "orientation": "horizontal",
-        "showValue": "auto",
-        "stacking": "none",
-        "tooltip": {
-          "mode": "single",
-          "sort": "none"
-        },
-        "xField": "DestPort",
-        "xTickLabelRotation": 0,
-        "xTickLabelSpacing": 100
-      },
-      "pluginVersion": "11.3.1",
-      "targets": [
-        {
-          "editorType": "sql",
-          "format": 1,
-          "meta": {
-            "builderOptions": {
-              "columns": [],
-              "database": "",
-              "limit": 1000,
-              "mode": "list",
-              "queryType": "table",
-              "table": ""
-            }
-          },
-          "pluginVersion": "4.5.1",
-          "queryType": "table",
-          "rawSql": "SELECT\r\n  dst_port as DestPort,\r\n  COUNT(DestPort) as DestPortCount\r\n  FROM traffic_records_all\r\n  GROUP BY DestPort\r\n  ORDER BY DestPortCount DESC\r\n  LIMIT 10",
-          "refId": "A"
-        }
-      ],
-      "title": "Top 10 destination ports (by count)",
-      "type": "barchart"
+      "title": "Distribution of L4 protocol (bandwidth)",
+      "type": "piechart"
     }
   ],
   "preload": false,
@@ -503,6 +390,6 @@
   "timezone": "browser",
   "title": "Internet traffic capture analysis",
   "uid": "be59fkbp3zs3kc",
-  "version": 11,
+  "version": 1,
   "weekStart": ""
 }

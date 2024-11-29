@@ -1,7 +1,8 @@
 #!/bin/bash
 
-while getopts "M:D:T:A" flag; do
+while getopts "SMDT:A" flag; do
 	case "${flag}" in
+	S) sudoRequired=true ;;
 	M) masterNode=true ;;
 	D) downStack=true ;;
 	T) swarmToken=$OPTARG ;;
@@ -9,34 +10,36 @@ while getopts "M:D:T:A" flag; do
 	esac
 done
 
-echo "masterNode: $masterNode"
-echo "downStack: $downStack"
-echo "swarmToken: $swarmToken"
-echo "managerAddr: $managerAddr"
-
-$scriptDir = $(readlink -f "$0")
+scriptDir=$(dirname $(readlink -f "$0"))
 # echo $scriptDir # ===> /Project/scripts
 
-$stackName="TheWebFarm"
+stackName="TheWebFarm"
+
+dockerCmd="docker"
+if [[ $sudoRequired ]]; then
+	dockerCmd="sudo docker"
+fi
 
 if [[ $downStack ]]; then
 	echo "[+] Removing stack..."
-	docker stack rm $stackName
-	docker service rm registry
+	echo "$dockerCmd stack rm $stackName"
+	$dockerCmd stack rm $stackName
+	$dockerCmd service rm registry
 	sleep 20
-	docker volume rm $(docker volume ls --filter name=$stackName -q)
-elif ($MasterNode); then
+	$dockerCmd volume rm $($dockerCmd volume ls --filter name=$stackName -q)
+elif ($masterNode); then
 	echo "[+] swarm master"
-
+	$dockerCmd swarm init
+	
 	# data streaming
 	cd $scriptDir/../preprocessing
-	docker service create --name registry -p 5000:5000 registry:2
-	# docker build -t 127.0.0.1:5000/data-streamer:latest --no-cache --push -f Dockerfile.python .
-	docker build -t 127.0.0.1:5000/data-streamer:latest --push -f Dockerfile.python .
+	$dockerCmd service create --name registry -p 5000:5000 registry:2
+	# $dockerCmd build -t 127.0.0.1:5000/data-streamer:latest --no-cache --push -f Dockerfile.python .
+	$dockerCmd build -t 127.0.0.1:5000/data-streamer:latest --push -f Dockerfile.python .
 
 	# execute
 	cd $scriptDir
-	docker stack deploy -d \
+	$dockerCmd stack deploy -d \
 		-c ../preprocessing/docker-compose.yml \
 		-c ../clickhouse/docker-compose.yaml \
 		-c ../ui/docker-compose.yaml \
@@ -49,5 +52,5 @@ elif ($MasterNode); then
 else
 	echo "[+] swarm follower"
 	echo "[+] joining swarm with token $swarmToken"
-	docker swarm join --token $swarmToken $managerAddr
+	$dockerCmd swarm join --token $swarmToken $managerAddr
 fi
