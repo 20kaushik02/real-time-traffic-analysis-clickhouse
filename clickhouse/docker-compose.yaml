@@ -61,6 +61,7 @@ services:
       - ../clickhouse/node1-config/:/etc/clickhouse-server/config.d/
       - ../clickhouse/node-entrypoints/main:/docker-entrypoint-initdb.d
       - ../preprocessing/geoip.csv:/var/lib/clickhouse/user_files/csv/ip_region_map.csv
+      - ../preprocessing/geoip_cc.csv:/var/lib/clickhouse/user_files/csv/ip_region_cc_map.csv
       - clickhouse_server1_data:/var/lib/clickhouse
       - clickhouse_server1_TTL:/clickhouse_data/server1
     networks:

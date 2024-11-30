@@ -56,8 +56,10 @@ services:
         aliases:
           - data-streamer
     volumes:
-      - "../preprocessing/10k_sample_2023_10_01-2023_10_31.csv:/data/csv/main.csv:ro"
-    command: "sh -c 'sleep 30 && python /app/pcap_processor.py -c /data/csv/main.csv -l 0.1'"
+      # - "../preprocessing/10k_sample_2023_10_01-2023_10_31.csv:/data/csv/main.csv:ro"
+      - "../preprocessing/1M_sample_2023_10_01-2023_10_31.csv:/data/csv/main.csv:ro"
+    command: "sh -c 'sleep 30 && python /app/pcap_processor.py -c /data/csv/main.csv'"
+    # command: "sh -c 'sleep 30 && python /app/pcap_processor.py -c /data/csv/main.csv -l 0.1'"
     deploy:
       replicas: 1
       # placement:
