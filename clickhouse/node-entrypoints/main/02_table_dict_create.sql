@@ -20,9 +20,17 @@ CREATE TABLE ip_region_map (
 	ip_range_start IPv4,
 	ip_range_end IPv4,	
 	region LowCardinality(String),
+	ip_range_cidr String MATERIALIZED IPv4RangeToCIDRString(ip_range_start, ip_range_end),
 	INDEX region_idx region TYPE bloom_filter
 ) ENGINE = ReplicatedMergeTree(
 	'/clickhouse/tables/{shard}/ip_region_map',
 	'{replica}'
 )
 ORDER BY ip_range_start;
+
+CREATE DICTIONARY ip_region_dict
+(ip_range_cidr String, region String)
+PRIMARY KEY ip_range_cidr
+SOURCE(CLICKHOUSE(TABLE 'ip_region_map'))
+LAYOUT(ip_trie)
+LIFETIME(3600);
