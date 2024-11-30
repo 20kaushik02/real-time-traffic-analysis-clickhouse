@@ -1,10 +1,11 @@
 #!/bin/bash
 
-while getopts "SMDT:A" flag; do
+while getopts "SMDUT:A" flag; do
 	case "${flag}" in
 	S) sudoRequired=true ;;
 	M) masterNode=true ;;
 	D) downStack=true ;;
+	U) autoShard=true ;;
 	T) swarmToken=$OPTARG ;;
 	A) managerAddr=$OPTARG ;;
 	esac
@@ -27,7 +28,7 @@ if [[ $downStack ]]; then
 	$dockerCmd service rm registry
 	sleep 20
 	$dockerCmd volume rm $($dockerCmd volume ls --filter name=$stackName -q)
-elif ($masterNode); then
+elif [[ $masterNode ]]; then
 	echo "[+] swarm master"
 	$dockerCmd swarm init
 	
@@ -38,17 +39,16 @@ elif ($masterNode); then
 	$dockerCmd build -t 127.0.0.1:5000/data-streamer:latest --push -f Dockerfile.python .
 
 	# execute
+	chmod 774 ../clickhouse/node-entrypoints/*/00_wait_for_keeper.sh
 	cd $scriptDir
 	$dockerCmd stack deploy -d \
 		-c ../preprocessing/docker-compose.yml \
 		-c ../clickhouse/docker-compose.yaml \
 		-c ../ui/docker-compose.yaml \
 		$stackName
-
-	# scripts
-	# pip install -r "$scriptDir/../final/config_update_scripts/requirements.txt"
-	# cd $scriptDir/../preprocessing
-	# python3 update_trigger.py
+elif [[ $autoShard ]]; then
+	cd $scriptDir
+	python3 $scriptDir/../clickhouse/config_update_scripts/update_trigger.py
 else
 	echo "[+] swarm follower"
 	echo "[+] joining swarm with token $swarmToken"

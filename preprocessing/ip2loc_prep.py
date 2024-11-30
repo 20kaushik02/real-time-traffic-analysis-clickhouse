@@ -14,7 +14,7 @@ def int_to_ipv4(num: int) -> str:
 
 # with open("IP2LOCATION-LITE-DB3.csv", "r") as input_file, open(
 with open("IP2LOCATION-LITE-DB1.csv", "r") as input_file, open(
-    "geoip.csv", "w", newline=""
+    "geoip_cc.csv", "w", newline=""
 ) as output_file:
     reader = csv.reader(input_file)
     writer = csv.writer(output_file)
@@ -24,6 +24,7 @@ with open("IP2LOCATION-LITE-DB1.csv", "r") as input_file, open(
         [
             "ip_range_start",
             "ip_range_end",
+            "country_code",
             "country",
             # "region",
             # "city",
@@ -35,6 +36,7 @@ with open("IP2LOCATION-LITE-DB1.csv", "r") as input_file, open(
         new_record = [
             int_to_ipv4(int(record[0])),
             int_to_ipv4(int(record[1])),
+            record[2],
             record[3],
             # record[4],
             # record[5],

@@ -13,16 +13,25 @@ CREATE TABLE traffic_records (
 	'{replica}'
 )
 ORDER BY time_stamp
-TTL toDateTime(time_stamp) + INTERVAL 15 DAY TO VOLUME 'cold_vol'
+TTL toDateTime(time_stamp) + INTERVAL 410 DAY TO VOLUME 'cold_vol' -- october 15
 SETTINGS storage_policy = 'hot_cold';
 
 CREATE TABLE ip_region_map (
 	ip_range_start IPv4,
 	ip_range_end IPv4,	
-	region LowCardinality(String),
-	INDEX region_idx region TYPE bloom_filter
+	ip_range_cidr String MATERIALIZED IPv4RangeToCIDRString(ip_range_start, ip_range_end),
+	country_code LowCardinality(String),
+	country LowCardinality(String),
+	INDEX country_idx country TYPE bloom_filter
 ) ENGINE = ReplicatedMergeTree(
 	'/clickhouse/tables/{shard}/ip_region_map',
 	'{replica}'
 )
 ORDER BY ip_range_start;
+
+CREATE DICTIONARY ip_region_dict
+(ip_range_cidr String, country_code String, country String)
+PRIMARY KEY ip_range_cidr
+SOURCE(CLICKHOUSE(TABLE 'ip_region_map'))
+LAYOUT(ip_trie)
+LIFETIME(3600);

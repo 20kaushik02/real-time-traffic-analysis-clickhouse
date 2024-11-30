@@ -1,25 +1,27 @@
-<storage_configuration>
-    <disks>
-        <hot_disk> 
-            <path>/clickhouse_data{{server_num}}/hot</path>
-            <keep_free_space_bytes>300000000</keep_free_space_bytes>
-        </hot_disk>
-        <cold_disk> 
-            <path>/clickhouse_data{{server_num}}/cold</path>
-            <keep_free_space_bytes>500000000</keep_free_space_bytes>
-        </cold_disk>
-    </disks>
-    <policies>
-        <hot_cold>
-            <volumes>
-                <hot_vol>
-                    <disk>hot_disk</disk>
-                </hot_vol>
-                <volume_name_2>
-                    <disk>cold_disk</disk>
-                </volume_name_2>
-            </volumes>
-            <move_factor>0.2</move_factor>
-        </hot_cold>
-    </policies>
-</storage_configuration>
+<clickhouse>
+    <storage_configuration>
+        <disks>
+            <hot_disk> 
+                <path>/clickhouse_data/server{{server_num}}/hot</path>
+            </hot_disk>
+            <cold_disk> 
+                <path>/clickhouse_data/server{{server_num}}/cold</path>
+            </cold_disk>
+        </disks>
+        <policies>
+            <hot_cold>
+                <volumes>
+                    <hot_vol>
+                        <disk>hot_disk</disk>
+                        <max_data_part_size_bytes>1073741824</max_data_part_size_bytes>
+                    </hot_vol>
+                    <cold_vol>
+                        <disk>cold_disk</disk>
+                        <max_data_part_size_bytes>1073741824</max_data_part_size_bytes>
+                    </cold_vol>
+                </volumes>
+                <move_factor>0.2</move_factor>
+            </hot_cold>
+        </policies>
+    </storage_configuration>
+</clickhouse>
