@@ -46,11 +46,13 @@ elif [[ $masterNode ]]; then
 		-c ../clickhouse/docker-compose.yaml \
 		-c ../ui/docker-compose.yaml \
 		$stackName
-elif [[ $autoShard ]]; then
-	cd $scriptDir
-	python3 $scriptDir/../clickhouse/config_update_scripts/update_trigger.py
 else
 	echo "[+] swarm follower"
 	echo "[+] joining swarm with token $swarmToken"
 	$dockerCmd swarm join --token $swarmToken $managerAddr
+fi
+
+if [[ $autoShard ]]; then
+	cd $scriptDir
+	python3 ../clickhouse/config_update_scripts/update_trigger.py
 fi
