@@ -19,7 +19,6 @@ def check_util_exec():
         if re.findall(r'clickhouse-server',service['Name']):
             if float(service['MemPerc'][:-1]) < 50:
                 resource_util_exceed_flag = False
-    
     if resource_util_exceed_flag:
         print("Config update triggered")
         process = subprocess.Popen(['python3','../clickhouse/config_update_scripts/update_compose.py'],text=True,stdout=subprocess.PIPE,stderr=subprocess.PIPE)
