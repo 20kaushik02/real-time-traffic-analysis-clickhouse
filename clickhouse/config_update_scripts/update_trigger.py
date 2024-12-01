@@ -31,6 +31,7 @@ def check_util_exec():
             stdout1, stderr1= redeploy.communicate()  # Wait for the process to finish and capture output
             print("Standard Output:", stdout1)
             print("Standard Error:", stderr1)
+            time.sleep(120)
         # try:
         #     all_services = subprocess.check_output(["sudo", "docker","stats","--no-stream","--format","json"],text=True).split('\n')[:-1]
         # except subprocess.CalledProcessError as e:
