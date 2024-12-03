@@ -105,3 +105,4 @@ if __name__ == "__main__":
         with open(f'../clickhouse/node{curr_num_servers + i}-config/storage-policy.xml','w') as f4:
             f4.write(storage_policy_content)
 
+    print("Config Files Updated!")

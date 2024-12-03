@@ -431,7 +431,7 @@
           "refId": "A"
         }
       ],
-      "title": "Top regions (packet count)",
+      "title": "Top regions (packet count in millions)",
       "type": "bargauge"
     },
     {
@@ -942,6 +942,6 @@
   "timezone": "browser",
   "title": "Internet traffic capture analysis",
   "uid": "be59fkbp3zs3kc",
-  "version": 4,
+  "version": 1,
   "weekStart": ""
 }
